@@ -133,24 +133,25 @@ resource "aws_network_acl" "nacl_private-app" {
     protocol   = "tcp"
     from_port  = 80
     to_port    = 80
+  }
 
-
-engress {
+  egress {
     rule_no    = 200
     action     = "allow"
     cidr_block = var.public_subnet_user_cidr
     protocol   = "-1"
     from_port  = 0
     to_port    = 0
-
+  }
 
   tags = {
     Name = "${var.tag}-nacl-private-subnet-app"
   }
 }
 
+
 ## Aws SG for APP-ec2####
-resource "aws_security_group" "private_subnetapp_sg" {
+resource "aws_security_group" "private_subnetapp_sgroup" {
   vpc_id = aws_vpc.vpc.id
   # Allow inbound traffic from Database Subnets to application subnet on port 5432
   
@@ -160,3 +161,39 @@ resource "aws_security_group" "private_subnetapp_sg" {
     to_port     = 80
     protocol    = "tcp"
     description = "Allow inbound traffic from Public Load Balancers to Application"
+    # Allow access from the public load balancer(s)
+    # Update the following with your load balancer's CIDR block(s)
+    cidr_blocks = [var.public_subnet_application_cidr]# Replace  with your load balancer's CIDR block(s)
+  }
+  # Restrict egress traffic to necessary destinations (Modify as needed)
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.public] # Allow outbound traffic to the internet (Modify based on requirements)
+    # Consider restricting outbound traffic to necessary destinations for better security
+  }
+  tags = {
+    Name = "${var.tag}-App-security-group"
+  }
+}
+
+
+resource "aws_security_group" "public_sg" {
+  vpc_id    = aws_vpc.vpc.id
+  tags = {
+    Name = "public-sg"
+  }
+  egress = [
+    {
+      cidr_blocks      = [ "0.0.0.0/0", ]
+      description      = "public security group"
+      from_port        = 0
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      protocol         = "-1"
+      security_groups  = []
+      self             = false
+      to_port          = 0
+    }
+  ]

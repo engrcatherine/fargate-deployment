@@ -5,7 +5,12 @@
 variable "cidr_block" {
   default = "10.0.0.0/16"
 }
-
+variable "region" {
+  default = "us-east-1"
+}
+variable "profile" {
+  default = "staging"
+}
 variable "public" {
   default = "0.0.0.0/0"
 }
@@ -27,3 +32,10 @@ variable "public_subnet_user_cidr" {
 variable "public_subnet_user_tag" {
   default = "public subnet user"
 }
+
+
+
+
+
+
+
