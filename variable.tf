@@ -90,6 +90,6 @@ variable "main" {
 }
 
 variable "repo_name" {
-  type        = string
-  default     = "webapp" # Replace with your desired default value
+  type    = string
+  default = "webapp" # Replace with your desired default value
 }
