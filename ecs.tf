@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "main" {
-  name = "${var.main.name}-${var.environment}"
+  name = var.repo_name
   # Other configurations for the ECR repository...
 }
 
